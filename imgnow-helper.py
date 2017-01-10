@@ -70,8 +70,8 @@ def processQueue(dir):
     Errors are moved to errors/.
     Once a group has been processed, all original files are moved to archive/.
     """
-    mask = lambda x: if x[-4:] in ['.tif', '.pdf']  # filter to tiff and pdf only
-    queue = [item for item in os.listdir(dir) if filter(x)]
+    mask = lambda x: x[-4:] in ['.tif', '.pdf']  # filter to tiff and pdf only
+    queue = [item for item in os.listdir(dir) if mask(item)]
     if len(queue) < 1:
         print("No images to process.")
         return
@@ -144,7 +144,7 @@ def processFiles(dir, roster):
                 print('  Active: renaming to {}'.format(fn))
             else:
                 outfile = 'inactive/{}'.format(bn)
-                print('  Inactive: moving to inactive folder'
+                print('  Inactive: moving to inactive folder')
             shutil.move(pdf, outfile)
 
 
@@ -157,7 +157,7 @@ def main():
 
     # combine and move files from queue folder
     processQueue('queue')
-    print('\n'*10 + '='*120 + '\n'*10)
+    print('\n'*3 + '='*80 + '\n'*3)
     # initialize a roster
     roster = Roster('data/roster.txt')
     processFiles('processing', roster)
