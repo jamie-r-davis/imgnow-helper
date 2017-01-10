@@ -44,6 +44,11 @@ All required packages are listed in `requirements.txt`
 
     pip install -r requirements.txt
     
+### Run Setup Script
+Run the setup script to build the project folder structure. This will ensure all of the required folders exist for the app to run.
+
+    python3 setup.py
+
 
 ## Usage & Program Workflow
 Once the project is installed, add the latest `roster.txt` file to the data directory and add images to the queue folder. Run the following Terminal commands in sequence:
