@@ -1,0 +1,2 @@
+emplid	acad_career	first_name	last_name	prog_status
+12345678	UMUS	Test	Applicant	AP	DDEF	AUD 
