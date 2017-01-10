@@ -11,6 +11,7 @@ def TIFFS2PDF(tiffs, outname):
     print('Compiling {} ({} pages)'.format(outname, len(tiffs)))
     c = Canvas(outname)
     for tiff in tiffs:
+        bn = os.path.basename(tiff)
         im = Image.open(tiff)
         if im.width > im.height:
             orientation = 'landscape'  # landscape
@@ -18,7 +19,7 @@ def TIFFS2PDF(tiffs, outname):
         else:
             orientation = 'portrait'
             width, height = 8.5*inch, 11*inch  #portrait
-        print('  Adding {}: {}x{} ({})...'.format(tiff, im.width, im.height, orientation))
+        print('  Adding {}: {}x{} ({})...'.format(bn, im.width, im.height, orientation))
         im.thumbnail([1400,1400])
         tiff_img = ImageReader(im)
 
@@ -32,6 +33,7 @@ def MergePDFs(pdfs, outname):
     print('Compiling {} ({} pages)'.format(outname, len(pdfs)))
     merger = PdfFileMerger()
     for pdf in pdfs:
+        bn = os.path.basename(pdf)
         print('  Adding {}...'.format(pdf))
-        merger.append(pdf, import_bookmarks=False)
+        merger.append(bn, import_bookmarks=False)
     merger.write(outname)
