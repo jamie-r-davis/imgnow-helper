@@ -55,7 +55,7 @@ Once the project is installed, add the latest `roster.txt` file to the data dire
 
     cd ~/projects/imgnow-helper
     source env/bin/activate
-    python imgnow-helper.py
+    python3 imgnow-helper.py
     
 The program will begin processing files.
 
