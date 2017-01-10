@@ -35,5 +35,5 @@ def MergePDFs(pdfs, outname):
     for pdf in pdfs:
         bn = os.path.basename(pdf)
         print('  Adding {}...'.format(pdf))
-        merger.append(bn, import_bookmarks=False)
+        merger.append(pdf, import_bookmarks=False)
     merger.write(outname)
