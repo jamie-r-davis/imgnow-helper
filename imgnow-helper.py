@@ -70,7 +70,8 @@ def processQueue(dir):
     Errors are moved to errors/.
     Once a group has been processed, all original files are moved to archive/.
     """
-    queue = [item for item in os.listdir(dir) if os.path.isfile(os.path.join(dir, item))]
+    mask = lambda x: if x[-4:] in ['.tif', '.pdf']  # filter to tiff and pdf only
+    queue = [item for item in os.listdir(dir) if filter(x)]
     if len(queue) < 1:
         print("No images to process.")
         return
@@ -95,6 +96,7 @@ def processQueue(dir):
             outname = group[0].split('.')[0] + '.pdf'
             try:
                 MergePDFs(group_path, 'processing/{}'.format(outname))
+                archiveGroup(group)
             except Exception as e:
                 print(e)
                 errorGroup(group)
@@ -112,17 +114,18 @@ def processFiles(dir, roster):
     Errors are moved to errors/.
     Failed lookups are kept in processing/ for a future pass against a revised roster.
     """
-    files = [os.path.abspath(item) for item in os.listdir(dir) if os.path.isfile(item)]
+    mask = lambda x: x.endswith('.pdf')
+    files = [os.path.abspath(item) for item in os.listdir(dir) if mask(item)]
     for pdf in files:
         bn = os.path.basename(pdf)
-        filename, ext = os.path.splitext(pdf)
+        filename, ext = os.path.splitext(bn)
         print("Processing {}".format(os.path.basename(pdf)))
         keys = filename.split('_')
         emplid = keys[1]
         doctype = keys[3]
         if len(emplid) != 8 or not emplid.isdigit:  # emplid consists of non-numeric
             print("  Skipping: Unable to parse emplid ({})".format(emplid))
-            shutil.mv(pdf, 'errors/{}'.format(bn))  # move to errors folder
+            shutil.move(pdf, 'errors/{}'.format(bn))  # move to errors folder
             continue  # go to next pdf
         match = roster.search('emplid', emplid)
         if match == None:
@@ -132,15 +135,17 @@ def processFiles(dir, roster):
             statuses = [item['prog_status'] for item in match]
             if 'AP' in statuses:  # application pending
                 fn = '{lname}, {fname} - {doctype} - {career}{ext}'.format(
-                    lname=result['last_name'],
-                    fname=result['first_name'],
+                    lname=match[0]['last_name'],
+                    fname=match[0]['first_name'],
                     doctype=doctype,
-                    career=result['career'],
+                    career=match[0]['career'],
                     ext=ext)
                 outfile = 'ready/{}'.format(fn)
+                print('  Active: renaming to {}'.format(fn))
             else:
-                outfile = 'inactive/{}'.format(fn)
-            shutil.mv(pdf, 'inactive/{}'.format(bn))
+                outfile = 'inactive/{}'.format(bn)
+                print('  Inactive: moving to inactive folder'
+            shutil.move(pdf, outfile)
 
 
 def main():
@@ -152,7 +157,7 @@ def main():
 
     # combine and move files from queue folder
     processQueue('queue')
-
+    print('\n'*10 + '='*120 + '\n'*10)
     # initialize a roster
     roster = Roster('data/roster.txt')
     processFiles('processing', roster)
