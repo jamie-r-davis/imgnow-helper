@@ -9,6 +9,16 @@ import shutil
 import sys
 
 
+def config():
+    """Ensure project directory structure exists"""
+    dirs = ['archive', 'data', 'errors', 'processing', 'queue', 'ready']
+    for dir in dirs:
+        if not os.path.exists(dir):
+            print('Creating {}/'.format(dir)
+            os.mkdir(dir)
+    return None
+        
+
 def naturalSort(l):
     """
     sorts a list naturally
@@ -40,15 +50,26 @@ def groupFiles(filenames):
 
     return digest
 
+
 def archiveGroup(group):
+    """Moves a file group from queue/ to archive/"""
     for img in group:
         shutil.move('queue/'+img, 'archive/'+img)
 
+        
 def errorGroup(group):
+    """Moves a file group from queue/ to errors/"""
     for img in group:
         shutil.move('queue/'+img, 'errors/'+img)
 
+        
 def processQueue(dir):
+    """
+    Processes the queue directory by grouping like files together and then converting/combining each group.
+    All successfully processed files are moved to processing/.
+    Errors are moved to errors/.
+    Once a group has been processed, all original files are moved to archive/.
+    """
     queue = [item for item in os.listdir(dir) if os.path.isfile(os.path.join(dir, item))]
     if len(queue) < 1:
         print("No images to process.")
@@ -81,7 +102,16 @@ def processQueue(dir):
             pass  # neither tif or pdf
             archiveGroup(group)
 
+            
 def processFiles(dir, roster):
+    """
+    Processes the processing/ directory by trying to parse an emplid out of each file name,
+    performing a lookup against the roster, and renaming the file.
+    Successfully processed files are moved to ready/ if they match an active application;
+    files matched with an inactive application are moved to inactive.
+    Errors are moved to errors/.
+    Failed lookups are kept in processing/ for a future pass against a revised roster.
+    """
     files = [os.path.abspath(item) for item in os.listdir(dir) if os.path.isfile(item)]
     for pdf in files:
         bn = os.path.basename(pdf)
@@ -92,6 +122,7 @@ def processFiles(dir, roster):
         doctype = keys[3]
         if len(emplid) != 8 or not emplid.isdigit:  # emplid consists of non-numeric
             print("  Skipping: Unable to parse emplid ({})".format(emplid))
+            shutil.mv(pdf, 'errors/{}'.format(bn))  # move to errors folder
             continue  # go to next pdf
         match = roster.search('emplid', emplid)
         if match == None:
@@ -116,18 +147,15 @@ def main():
     print("SMTD Image Converter\nCopyright 2017, Crespbro Software, Inc. -- We put the pee in your pineapple.")
     print('='*120)
 
+    # ensure project folder structure is intact
+    config()
+
     # combine and move files from queue folder
     processQueue('queue')
 
     # initialize a roster
     roster = Roster('data/roster.txt')
     processFiles('processing', roster)
-
-
-    #for image in processing:
-    #    outfile = Roster.suggest(image)
-    #    if outfile != image:
-    #        shutil.move('processing/'+image, 'ready/'+image)
 
 
 if __name__ == '__main__':
