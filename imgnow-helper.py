@@ -115,7 +115,7 @@ def processFiles(dir, roster):
     Failed lookups are kept in processing/ for a future pass against a revised roster.
     """
     mask = lambda x: x.endswith('.pdf')
-    files = [os.path.abspath(item) for item in os.listdir(dir) if mask(item)]
+    files = [os.path.join(dir, item) for item in os.listdir(dir) if mask(item)]
     for pdf in files:
         bn = os.path.basename(pdf)
         filename, ext = os.path.splitext(bn)
