@@ -138,7 +138,7 @@ def processFiles(dir, roster):
                     lname=match[0]['last_name'],
                     fname=match[0]['first_name'],
                     doctype=doctype,
-                    career=match[0]['career'],
+                    career=match[0]['acad_career'],
                     ext=ext)
                 outfile = 'ready/{}'.format(fn)
                 print('  Active: renaming to {}'.format(fn))
