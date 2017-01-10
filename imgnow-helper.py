@@ -14,7 +14,7 @@ def config():
     dirs = ['archive', 'data', 'errors', 'processing', 'queue', 'ready']
     for dir in dirs:
         if not os.path.exists(dir):
-            print('Creating {}/'.format(dir)
+            print('Creating {}/'.format(dir))
             os.mkdir(dir)
     return None
         
