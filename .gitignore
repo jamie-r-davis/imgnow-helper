@@ -87,3 +87,8 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# Project Data
+*.pdf
+*.tif
+data/*.txt
