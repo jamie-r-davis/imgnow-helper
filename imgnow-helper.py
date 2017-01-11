@@ -7,17 +7,41 @@ import os
 import re
 import shutil
 import sys
+import textwrap
 
 
-def config():
-    """Ensure project directory structure exists"""
-    dirs = ['archive', 'data', 'errors', 'processing', 'queue', 'ready']
-    for dir in dirs:
-        if not os.path.exists(dir):
-            print('Creating {}/'.format(dir))
-            os.mkdir(dir)
-    return None
-        
+def projectCheck():
+    """Ensures project folder integrity"""
+    folders = ['data', 'queue', 'processing',
+            'inactive', 'ready', 'errors', 'archive']
+    for folder in folders:
+        if not os.path.exists(folder):
+            print("Project folder structure is not valid.")
+            print("Run 'setup.py' to rebuild folders.")
+            exit()
+
+
+def preflightCheck():
+    """Scans queue & processing dirs and print usage if empty"""
+    USAGE = """
+            To use this app, place pdfs and tiffs exported from ImageNow
+            into the 'queue' folder and run this script.
+
+            The app will convert and combine images that belong to the same
+            doctype for the same person. Converted images will be renamed
+            based off of the roster placed in the 'data' folder. The final
+            pdfs will be found in the 'ready' folder. Images that failed to
+            convert will be moved to 'errors'. All original files will be
+            copied to 'archive'. As an additional feature, if an applicant
+            no longer has an active program, those images will be moved to
+            'inactive' so that they are not uploaded to the external system.
+            """
+    queue = os.listdir('queue')
+    processing = os.listdir('processing')
+    if len(queue) == 0 and len(processing) == 0:
+        print(textwrap.dedent(USAGE))
+        exit()
+
 
 def naturalSort(l):
     """
@@ -47,7 +71,6 @@ def groupFiles(filenames):
             l = [item]
     l = naturalSort(l)  # ensure pages are in order [1, 2,...11] not [1, 11, 2]
     digest.append(l)  # catch final group
-
     return digest
 
 
@@ -56,13 +79,13 @@ def archiveGroup(group):
     for img in group:
         shutil.move('queue/'+img, 'archive/'+img)
 
-        
+
 def errorGroup(group):
     """Moves a file group from queue/ to errors/"""
     for img in group:
         shutil.move('queue/'+img, 'errors/'+img)
 
-        
+
 def processQueue(dir):
     """
     Processes the queue directory by grouping like files together and then converting/combining each group.
@@ -77,7 +100,6 @@ def processQueue(dir):
         return
     # get file groups for processing
     file_groups = groupFiles(queue)
-
     for group in file_groups:
         group_path = [os.path.join(dir, item) for item in group]
         if group[0].endswith('tif'):  # group of tiffs
@@ -104,7 +126,7 @@ def processQueue(dir):
             pass  # neither tif or pdf
             archiveGroup(group)
 
-            
+
 def processFiles(dir, roster):
     """
     Processes the processing/ directory by trying to parse an emplid out of each file name,
@@ -152,8 +174,8 @@ def main():
     print("SMTD Image Converter\nCopyright 2017, Crespbro Software, Inc. -- We put the pee in your pineapple.")
     print('='*120)
 
-    # ensure project folder structure is intact
-    config()
+    projectCheck()
+    preflightCheck()
 
     # combine and move files from queue folder
     processQueue('queue')
