@@ -8,8 +8,9 @@ def buildProjectFolders():
                'processing',
                'ready',
                'data',
-               'queue']
-               
+               'queue',
+               'archive']
+
     for folder in folders:
         try:
             os.mkdir(folder)
@@ -20,7 +21,7 @@ def buildProjectFolders():
 
 def main():
     buildProjectFolders()
-    
+
 
 if __name__ == '__main__':
     main()
