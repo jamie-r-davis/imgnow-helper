@@ -172,7 +172,7 @@ def processFiles(dir, roster):
 
 def main():
     print("SMTD Image Converter\nCopyright 2017, Crespbro Software, Inc. -- We put the pee in your pineapple.")
-    print('='*120)
+    print('='*80)
 
     projectCheck()
     preflightCheck()
