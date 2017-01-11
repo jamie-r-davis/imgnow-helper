@@ -37,7 +37,7 @@ Activate your virtual environment with:
 
     source env/bin/activate
 
-Once active, your bash prompt will be prefixed with `(venv)`.
+Once active, your bash prompt will be prefixed with `(env)`.
 
 ### Install Requirements
 All required packages are listed in `requirements.txt`
