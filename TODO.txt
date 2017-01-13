@@ -1,0 +1,20 @@
+# TODO
+
+Add a feature to automatically upload a document to DecisionDesk.
+
+1. Get user auth or read a config file
+2. Launch Chrome using selenium
+3. Login to DecisionDesk
+4. Scan 'ready' folder, compare against roster for active with ddid
+5. For each valid document:
+    1. Get url
+    2. If document.filename not on page (document): 
+        - Select admin upload
+        - Upload file
+        - Select file
+        - Plug file values
+        
+Issues:
+- DecisionDesk site is unreliable, many tests/waits will have to be used
+- How to prevent duplicate uploads or allow when filenames are the same but contents are not?
+    - Maybe hash the file and put it somewhere in the doc attrs on dd?
