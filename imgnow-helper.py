@@ -156,10 +156,11 @@ def processFiles(dir, roster):
         else:
             statuses = [item['prog_status'] for item in match]
             if 'AP' in statuses:  # application pending
-                fn = '{lname}, {fname} - {doctype} - {career}{ext}'.format(
+                fn = '{lname}, {fname} - {doctype} - {emplid} - {career}{ext}'.format(
                     lname=match[0]['last_name'],
                     fname=match[0]['first_name'],
                     doctype=doctype,
+                    emplid=emplid,
                     career=match[0]['acad_career'],
                     ext=ext)
                 outfile = 'ready/{}'.format(fn)
