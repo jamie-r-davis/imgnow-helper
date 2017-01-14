@@ -18,3 +18,13 @@ Issues:
 - DecisionDesk site is unreliable, many tests/waits will have to be used
 - How to prevent duplicate uploads or allow when filenames are the same but contents are not?
     - Maybe hash the file and put it somewhere in the doc attrs on dd?
+
+
+upload input: input.hidden.file_uploader
+
+div#document-uploader>form.media-view-edit
+input.file_name - not present in profile DOM
+input.file_title - present in profile DOM
+textarea.file_description - present in profile DOM. Write md5 there?
+select.file_tag - set to option[@value='other']
+button.save_file_button
